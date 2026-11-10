@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>개표상황표 위조 의혹</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>/* 이브리프 장표 디자인 — 캔버스만 정방형. 논리 480×480 (1080×1080 = 2.25배) */
+:root {
+  --room: #0e1012; --room-fg: #c9cdd2;
+  --page: #f9f7f2; --fg: #1d1a17; --muted: #5f5a53; --line: #d9d3c7;
+  --accent: #C8161D; --mark: rgba(255, 165, 0, .68);
+  --mast: #F2F0EE; --mast-line: #E3DFDB;
+  --land: #e4ddd0; --sea: #f2efe8; --coast: #b8ad99;
+  --font-head: "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--room); color: var(--room-fg); font-family: var(--font-body);
+  display: flex; flex-direction: column; align-items: center; gap: 0; padding: 0; }
+.slot { position: relative; width: min(480px, 100%); aspect-ratio: 1; }
+.card { position: absolute; left: 0; top: 0; width: 480px; height: 480px; transform-origin: 0 0;
+  background: var(--page); color: var(--fg); overflow: hidden; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased; }
+.col { width: 440px; margin: 0 auto; }
+.mast { background: var(--mast); border-bottom: 1px solid var(--mast-line); }
+.mast .col { display: flex; align-items: center; height: 36.3px; }
+.mast img { display: block; height: 22px; width: auto; }
+.nav { background: #f1eee8; border-top: 1px solid var(--line); border-bottom: 2.2px solid var(--accent); }
+.nav .col { display: flex; gap: 17.6px; padding-block: 5.5px; font-size: 14.85px; font-weight: 700; color: #4a453f; line-height: 1.6; }
+.nav .on { color: #fff; background: var(--accent); margin-block: -5.5px; padding: 5.5px 9.9px; }
+.main { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+.foot { border-top: 1px solid var(--line); }
+.foot .col { display: flex; justify-content: space-between; align-items: center; height: 30px; font-size: 12.5px; color: var(--muted); }
+.foot b { color: var(--fg); font-weight: 700; }
+mark { background: linear-gradient(transparent 52%, var(--mark) 52%, var(--mark) 100%); color: inherit; border-radius: 0; }
+.crumb { font-size: 14px; color: var(--muted); display: flex; gap: 8px; }
+.crumb b { color: var(--accent); font-weight: 700; }
+.headline { font-family: var(--font-head); font-weight: 900; font-size: 40px; line-height: 1.3; letter-spacing: -0.03em; margin: 10px 0 0; word-break: keep-all; }
+.by { display: flex; gap: 6px; font-size: 12.5px; color: var(--muted); margin-top: 12px; font-family: var(--font-body); }
+.by strong { color: var(--fg); }
+.by i { font-style: normal; color: #b9bdb8; }
+.by time { font-family: var(--font-head); }
+.deck { margin-top: 26px; border-left: 3px solid var(--accent); padding-left: 16px; font-family: var(--font-head);
+  font-weight: 700; font-size: 22px; line-height: 1.5; color: #2b2723; word-break: keep-all; }
+.kicker { font-family: var(--font-head); font-weight: 900; font-size: 27px; letter-spacing: -0.03em; line-height: 1.3; margin: 0; }
+.kicker-rule { width: 44px; height: 2px; background: var(--accent); margin: 0 0 10px; }
+.items { list-style: none; margin: 10px 0 0; padding: 0; }
+.items li { display: grid; grid-template-columns: 30px 1fr; column-gap: 12px; padding: 13px 0 14px; border-top: 1px solid var(--line); }
+.items li:last-child { border-bottom: 1px solid var(--line); }
+.badge { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; margin-top: 3px; }
+.items h3 { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 21px; line-height: 1.35; letter-spacing: -0.02em; }
+.items p { margin: 3px 0 0; font-size: 16.5px; line-height: 1.6; word-break: keep-all; letter-spacing: -0.01em; }
+.lede { margin: 16px 0 0; font-size: 20px; line-height: 1.7; word-break: keep-all; letter-spacing: -0.01em; }
+.lede + .lede { margin-top: 12px; }
+.map { margin-top: 14px; }
+.map svg { display: block; width: 440px; height: auto; }
+.map + .lede { margin-top: 12px; font-size: 16.5px; line-height: 1.65; }
+.verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.verdict .label { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+.q-rule { width: 44px; height: 2px; background: var(--accent); }
+.verdict .q-rule.top { margin-top: 14px; }
+.big { font-family: var(--font-head); font-weight: 900; font-size: 33px; line-height: 1.4; letter-spacing: -0.03em; margin: 20px 0 22px; word-break: keep-all; }
+.big.q { font-size: 28px; line-height: 1.45; }
+.cite { margin: 0 0 18px; font-size: 13.5px; color: var(--muted); }
+.verdict .sub { margin: 22px 0 0; font-size: 17.28px; line-height: 1.75; word-break: keep-all; max-width: 410px; }
+.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; list-style: none; margin: 24px 0 0; padding: 0; }
+.tags li { padding: 4px 11px; border: 1px solid var(--line); font-size: 13.5px; color: #4a453f; }
+.src { font-size: 11.5px; color: var(--muted); }
+.tl { list-style: none; margin: 14px 0 0; padding: 0; }
+.tl li { display: grid; grid-template-columns: 74px 1fr; column-gap: 14px; padding: 13px 0 14px; border-top: 1px solid var(--line); }
+.tl li:last-child { border-bottom: 1px solid var(--line); }
+.tl .d { font-family: var(--font-head); font-weight: 900; font-size: 19px; color: var(--accent); line-height: 1.45; }
+.tl h3 { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 20px; line-height: 1.4; letter-spacing: -0.02em; word-break: keep-all; }
+.tl p { margin: 3px 0 0; font-size: 15.5px; line-height: 1.6; color: var(--muted); word-break: keep-all; }
+
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.cmp > div { border: 1px solid var(--line); border-top: 3px solid var(--accent); background: #fffdf8; padding: 14px 16px 16px; }
+.cmp > div.no { border-top-color: #8a847b; }
+.cmp .yr { font-family: var(--font-head); font-weight: 900; font-size: 30px; line-height: 1.2; letter-spacing: -0.02em; }
+.cmp .chip { display: inline-block; margin-top: 8px; padding: 2px 9px; font-size: 13.5px; font-weight: 700; color: #fff; background: var(--accent); }
+.cmp .no .chip { background: #8a847b; }
+.cmp p { margin: 10px 0 0; font-size: 16.5px; line-height: 1.6; word-break: keep-all; }
+.outlook { margin: 18px 0 0; font-size: 18px; line-height: 1.7; word-break: keep-all; }
+.tags.left { justify-content: flex-start; margin-top: 16px; }
+
+.photo { margin: 14px 0 0; }
+.photo img { display: block; width: 440px; height: 200px; object-fit: cover; }
+.photo figcaption { margin-top: 7px; text-align: center; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.photo + .lede { margin-top: 14px; }
+
+/* 사실 정리표 */
+.facts { margin: 14px 0 0; border-top: 2px solid var(--fg); }
+.facts .row { display: grid; grid-template-columns: 58px 1fr; column-gap: 14px; padding: 12px 0 13px; border-bottom: 1px solid var(--line); }
+.facts dt { font-size: 15px; font-weight: 700; color: var(--accent); line-height: 1.6; }
+.facts dd { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 20.5px; line-height: 1.45; letter-spacing: -0.02em; word-break: keep-all; }
+.facts dd small { display: block; margin-top: 2px; font-family: var(--font-body); font-weight: 400; font-size: 14px; line-height: 1.5; color: var(--muted); letter-spacing: -0.01em; }
+.facts + .lede { margin-top: 16px; font-size: 19.5px; }
+/* 비판 발언 모음 */
+.voices { margin: 12px 0 0; }
+.voice { position: relative; padding: 17px 0 18px 36px; border-top: 1px solid var(--line); }
+.voice:last-child { border-bottom: 1px solid var(--line); }
+.voice::before { content: "\201C"; position: absolute; left: 0; top: 8px; font-family: var(--font-head); font-weight: 900; font-size: 46px; line-height: 1; color: var(--accent); }
+.voice q { quotes: none; display: block; font-family: var(--font-head); font-weight: 900; font-size: 25px; line-height: 1.4; letter-spacing: -0.03em; word-break: keep-all; }
+.voice.lead q { font-size: 34px; }
+.voice .who { margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--muted); word-break: keep-all; }
+.voice .who b { color: var(--fg); font-weight: 700; }
+/* 해명 → 인정 */
+.turn { margin: 12px 0 0; }
+.turn .step { border: 1px solid var(--line); background: #fffdf8; padding: 12px 16px 14px; border-left: 4px solid #8a847b; }
+.turn .step.hot { border-left-color: var(--accent); }
+.turn .chip { display: inline-block; padding: 2px 9px; font-size: 13.5px; font-weight: 700; color: #fff; background: #8a847b; }
+.turn .hot .chip { background: var(--accent); }
+.turn .step p { margin: 6px 0 0; font-family: var(--font-head); font-weight: 900; font-size: 20px; line-height: 1.45; letter-spacing: -0.02em; word-break: keep-all; }
+.turn .but { display: flex; align-items: center; gap: 10px; margin: 6px 0 6px 14px; font-size: 14.5px; font-weight: 700; color: var(--accent); }
+.turn .but::before { content: ""; width: 2px; height: 20px; background: var(--accent); }
+.turn + .outlook { margin-top: 12px; font-size: 16.5px; line-height: 1.65; }
+#card2 .tl h3 mark { white-space: nowrap; }
+#card2 .tl li { padding: 15px 0 16px; grid-template-columns: 92px 1fr; }
+#card2 .tl .d { font-size: 20px; }
+#card2 .tl h3 { font-size: 22px; }
+#card2 .tl p { font-size: 16.5px; }
+#card2 .note { margin: 12px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); word-break: keep-all; }
+#card3 .voice q { font-size: 30px; }
+#card3 .voice { padding: 20px 0 21px 38px; }
+#card3 .voice .who { font-size: 15.5px; }
+#card4 .lede { font-size: 19.5px; }
+#card4 mark { white-space: nowrap; }
+</style></head><body>
+<div class="slot"><section class="card" id="card1"><header class="mast"><div class="col"><img src="logo_red.png" alt="이브리프"></div></header><nav class="nav"><div class="col"><span>종합</span><span class="on">정치</span><span>경제</span><span>사회</span><span>국제</span><span>문화</span><span>오피니언</span></div></nav><div class="main"><div class="col"><div class="crumb"><b>정치</b><span>›</span><span>선거</span></div><h1 class="headline">개표상황표 위조 의혹<br>국힘 “조직적 부정”<br>민주도 <mark>“철저 수사”</mark></h1><div class="by"><strong>이브리프 정치부</strong><i>|</i><time>입력 2026.11.10 23:10</time></div><div class="deck">특검, 경기·광주시 선관위 압수수색<br>경기도교육감 선거 개표 둘러싼 여야 공방</div></div></div></section></div>
+<div class="slot"><section class="card" id="card2"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">‘단순 실수’에서 ‘위조 의혹’으로</h2><ol class="tl"><li><span class="d">6월 3일</span><div><h3>개표 결과 잘못 입력</h3><p>경기도교육감 선거, 광주시 초월읍 일부 투표소 결과가 뒤바뀌어 입력</p></div></li><li><span class="d">6월 11일</span><div><h3>선관위 사과·정정</h3><p>경기도선관위 대국민 사과문 내고 수치 바로잡아</p></div></li><li><span class="d">11월 10일</span><div><h3>특검 압수수색</h3><p>은닉·위조 정황 포착… <b style="color:var(--fg)"><mark>조직적 은폐</mark> 여부</b> 수사</p></div></li></ol><p class="note">수치는 이미 정정돼 당선 결과와는 무관하다.</p></div></div></section></div>
+<div class="slot"><section class="card" id="card3"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">여야 “끝까지 밝혀야”</h2><div class="voices"><div class="voice"><q>이 사태가 어디까지 이어질지 심각한 우려</q><div class="who"><b>박충권 국민의힘 수석대변인</b> · “빙산의 일각” 공세</div></div><div class="voice"><q>조작이 있었다면 결코 용납할 수 없는 <mark>중대한 범죄</mark></q><div class="who"><b>안태훈 민주당 상근부대변인</b> · 민주당 출신 안민석 교육감 당선 선거… 말 아끼다 공식 입장</div></div></div></div></div></section></div>
+<div class="slot"><section class="card" id="card4"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">‘전자투표’로 번진 공방</h2><figure class="photo" style="margin-left:0;margin-right:0"><img src="photo_ballot.jpg" alt="투표지가 담긴 투명 투표함"></figure><figcaption style="margin-top:7px;text-align:center;font-size:11.5px;line-height:1.5;color:var(--muted)">투표함 자료사진(폴란드, 2024) · 이번 사건과 무관 · 사진: Wikimedia Commons</figcaption><p class="lede">국민의힘은 재외국민 전자투표 법안까지 겨냥했다. 이번 의혹을 고리로 선관위와 여당을 향한 <mark>압박 수위</mark>를 높일 전망이다.</p></div></div><footer class="foot"><div class="col"><span class="src">자료: YTN·한국일보·헤럴드경제·경인일보 보도 종합</span><span></span></div></footer></section></div>
+<script>
+(function () {
+  var slots = document.querySelectorAll('.slot');
+  function fit() { slots.forEach(function (s) { s.querySelector('.card').style.transform = 'scale(' + (s.clientWidth / 480) + ')'; }); }
+  window.addEventListener('resize', fit); fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+})();
+</script>
+</body></html>
