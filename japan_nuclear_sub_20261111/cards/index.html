@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>日 핵잠 검토 장표</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>/* 이브리프 장표 디자인 — 캔버스만 정방형. 논리 480×480 (1080×1080 = 2.25배) */
+:root {
+  --room: #0e1012; --room-fg: #c9cdd2;
+  --page: #f9f7f2; --fg: #1d1a17; --muted: #5f5a53; --line: #d9d3c7;
+  --accent: #C8161D; --mark: rgba(255, 165, 0, .68);
+  --mast: #F2F0EE; --mast-line: #E3DFDB;
+  --land: #e4ddd0; --sea: #f2efe8; --coast: #b8ad99;
+  --font-head: "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--room); color: var(--room-fg); font-family: var(--font-body);
+  display: flex; flex-direction: column; align-items: center; gap: 0; padding: 0; }
+.slot { position: relative; width: min(480px, 100%); aspect-ratio: 1; }
+.card { position: absolute; left: 0; top: 0; width: 480px; height: 480px; transform-origin: 0 0;
+  background: var(--page); color: var(--fg); overflow: hidden; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased; }
+.col { width: 440px; margin: 0 auto; }
+.mast { background: var(--mast); border-bottom: 1px solid var(--mast-line); }
+.mast .col { display: flex; align-items: center; height: 36.3px; }
+.mast img { display: block; height: 22px; width: auto; }
+.nav { background: #f1eee8; border-top: 1px solid var(--line); border-bottom: 2.2px solid var(--accent); }
+.nav .col { display: flex; gap: 17.6px; padding-block: 5.5px; font-size: 14.85px; font-weight: 700; color: #4a453f; line-height: 1.6; }
+.nav .on { color: #fff; background: var(--accent); margin-block: -5.5px; padding: 5.5px 9.9px; }
+.main { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+.foot { border-top: 1px solid var(--line); }
+.foot .col { display: flex; justify-content: space-between; align-items: center; height: 30px; font-size: 12.5px; color: var(--muted); }
+.foot b { color: var(--fg); font-weight: 700; }
+mark { background: linear-gradient(transparent 52%, var(--mark) 52%, var(--mark) 100%); color: inherit; border-radius: 0; }
+.crumb { font-size: 14px; color: var(--muted); display: flex; gap: 8px; }
+.crumb b { color: var(--accent); font-weight: 700; }
+.headline { font-family: var(--font-head); font-weight: 900; font-size: 40px; line-height: 1.3; letter-spacing: -0.03em; margin: 10px 0 0; word-break: keep-all; }
+.by { display: flex; gap: 6px; font-size: 12.5px; color: var(--muted); margin-top: 12px; font-family: var(--font-body); }
+.by strong { color: var(--fg); }
+.by i { font-style: normal; color: #b9bdb8; }
+.by time { font-family: var(--font-head); }
+.deck { margin-top: 26px; border-left: 3px solid var(--accent); padding-left: 16px; font-family: var(--font-head);
+  font-weight: 700; font-size: 22px; line-height: 1.5; color: #2b2723; word-break: keep-all; }
+.kicker { font-family: var(--font-head); font-weight: 900; font-size: 27px; letter-spacing: -0.03em; line-height: 1.3; margin: 0; }
+.kicker-rule { width: 44px; height: 2px; background: var(--accent); margin: 0 0 10px; }
+.items { list-style: none; margin: 10px 0 0; padding: 0; }
+.items li { display: grid; grid-template-columns: 30px 1fr; column-gap: 12px; padding: 13px 0 14px; border-top: 1px solid var(--line); }
+.items li:last-child { border-bottom: 1px solid var(--line); }
+.badge { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; margin-top: 3px; }
+.items h3 { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 21px; line-height: 1.35; letter-spacing: -0.02em; }
+.items p { margin: 3px 0 0; font-size: 16.5px; line-height: 1.6; word-break: keep-all; letter-spacing: -0.01em; }
+.lede { margin: 16px 0 0; font-size: 20px; line-height: 1.7; word-break: keep-all; letter-spacing: -0.01em; }
+.lede + .lede { margin-top: 12px; }
+.map { margin-top: 14px; }
+.map svg { display: block; width: 440px; height: auto; }
+.map + .lede { margin-top: 12px; font-size: 16.5px; line-height: 1.65; }
+.verdict { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.verdict .label { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em; }
+.q-rule { width: 44px; height: 2px; background: var(--accent); }
+.verdict .q-rule.top { margin-top: 14px; }
+.big { font-family: var(--font-head); font-weight: 900; font-size: 33px; line-height: 1.4; letter-spacing: -0.03em; margin: 20px 0 22px; word-break: keep-all; }
+.big.q { font-size: 28px; line-height: 1.45; }
+.cite { margin: 0 0 18px; font-size: 13.5px; color: var(--muted); }
+.verdict .sub { margin: 22px 0 0; font-size: 17.28px; line-height: 1.75; word-break: keep-all; max-width: 410px; }
+.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; list-style: none; margin: 24px 0 0; padding: 0; }
+.tags li { padding: 4px 11px; border: 1px solid var(--line); font-size: 13.5px; color: #4a453f; }
+.src { font-size: 11.5px; color: var(--muted); }
+.tl { list-style: none; margin: 14px 0 0; padding: 0; }
+.tl li { display: grid; grid-template-columns: 74px 1fr; column-gap: 14px; padding: 13px 0 14px; border-top: 1px solid var(--line); }
+.tl li:last-child { border-bottom: 1px solid var(--line); }
+.tl .d { font-family: var(--font-head); font-weight: 900; font-size: 19px; color: var(--accent); line-height: 1.45; }
+.tl h3 { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 20px; line-height: 1.4; letter-spacing: -0.02em; word-break: keep-all; }
+.tl p { margin: 3px 0 0; font-size: 15.5px; line-height: 1.6; color: var(--muted); word-break: keep-all; }
+
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.cmp > div { border: 1px solid var(--line); border-top: 3px solid var(--accent); background: #fffdf8; padding: 14px 16px 16px; }
+.cmp > div.no { border-top-color: #8a847b; }
+.cmp .yr { font-family: var(--font-head); font-weight: 900; font-size: 30px; line-height: 1.2; letter-spacing: -0.02em; }
+.cmp .chip { display: inline-block; margin-top: 8px; padding: 2px 9px; font-size: 13.5px; font-weight: 700; color: #fff; background: var(--accent); }
+.cmp .no .chip { background: #8a847b; }
+.cmp p { margin: 10px 0 0; font-size: 16.5px; line-height: 1.6; word-break: keep-all; }
+.outlook { margin: 18px 0 0; font-size: 18px; line-height: 1.7; word-break: keep-all; }
+.tags.left { justify-content: flex-start; margin-top: 16px; }
+
+.photo { margin: 14px 0 0; }
+.photo img { display: block; width: 440px; height: 200px; object-fit: cover; }
+.photo figcaption { margin-top: 7px; text-align: center; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.photo + .lede { margin-top: 14px; }
+
+/* 사실 정리표 */
+.facts { margin: 14px 0 0; border-top: 2px solid var(--fg); }
+.facts .row { display: grid; grid-template-columns: 58px 1fr; column-gap: 14px; padding: 12px 0 13px; border-bottom: 1px solid var(--line); }
+.facts dt { font-size: 15px; font-weight: 700; color: var(--accent); line-height: 1.6; }
+.facts dd { margin: 0; font-family: var(--font-head); font-weight: 900; font-size: 20.5px; line-height: 1.45; letter-spacing: -0.02em; word-break: keep-all; }
+.facts dd small { display: block; margin-top: 2px; font-family: var(--font-body); font-weight: 400; font-size: 14px; line-height: 1.5; color: var(--muted); letter-spacing: -0.01em; }
+.facts + .lede { margin-top: 16px; font-size: 19.5px; }
+/* 비판 발언 모음 */
+.voices { margin: 12px 0 0; }
+.voice { position: relative; padding: 17px 0 18px 36px; border-top: 1px solid var(--line); }
+.voice:last-child { border-bottom: 1px solid var(--line); }
+.voice::before { content: "\201C"; position: absolute; left: 0; top: 8px; font-family: var(--font-head); font-weight: 900; font-size: 46px; line-height: 1; color: var(--accent); }
+.voice q { quotes: none; display: block; font-family: var(--font-head); font-weight: 900; font-size: 25px; line-height: 1.4; letter-spacing: -0.03em; word-break: keep-all; }
+.voice.lead q { font-size: 34px; }
+.voice .who { margin-top: 6px; font-size: 15px; line-height: 1.55; color: var(--muted); word-break: keep-all; }
+.voice .who b { color: var(--fg); font-weight: 700; }
+/* 해명 → 인정 */
+.turn { margin: 12px 0 0; }
+.turn .step { border: 1px solid var(--line); background: #fffdf8; padding: 12px 16px 14px; border-left: 4px solid #8a847b; }
+.turn .step.hot { border-left-color: var(--accent); }
+.turn .chip { display: inline-block; padding: 2px 9px; font-size: 13.5px; font-weight: 700; color: #fff; background: #8a847b; }
+.turn .hot .chip { background: var(--accent); }
+.turn .step p { margin: 6px 0 0; font-family: var(--font-head); font-weight: 900; font-size: 20px; line-height: 1.45; letter-spacing: -0.02em; word-break: keep-all; }
+.turn .but { display: flex; align-items: center; gap: 10px; margin: 6px 0 6px 14px; font-size: 14.5px; font-weight: 700; color: var(--accent); }
+.turn .but::before { content: ""; width: 2px; height: 20px; background: var(--accent); }
+.turn + .outlook { margin-top: 12px; font-size: 16.5px; line-height: 1.65; }
+#card4 .tags.left { margin-top: 12px; }
+.cover .headline{font-size:32.4px}
+#card1 .headline{font-size:32.4px}
+.tl li{grid-template-columns:92px 1fr!important;column-gap:12px!important}
+.tl .d{font-size:18.5px!important;white-space:nowrap}
+.tl + .lede{margin-top:14px;font-size:18px;line-height:1.65}
+.facts + .lede{margin-top:16px}
+
+/* 이번 회차 */
+#card2 .photo img { height: 210px; }
+#card2 .photo + .lede { font-size: 19px; line-height: 1.7; }
+#card3 .tl li { padding: 11px 0 12px; }
+#card1 .headline { font-size: 36px; }
+#card1 .deck { font-size: 23px; margin-top: 30px; }
+#card4 .cmp .yr { font-size: 32px; }
+#card4 .cmp p { font-size: 17.5px; line-height: 1.6; }
+#card4 .outlook { font-size: 19px; }
+#card3 .tl h3 { font-size: 21px; }
+#card3 .tl p { font-size: 16.5px; }
+#card5 .turn + .outlook { font-size: 17px; }
+#card5 .tags.left { margin-top: 12px; }
+</style></head><body>
+<div class="slot"><section class="card cover" id="card1"><header class="mast"><div class="col"><img src="logo_red.png" alt="이브리프"></div></header><nav class="nav"><div class="col"><span>종합</span><span>정치</span><span>경제</span><span>사회</span><span class="on">국제</span><span>문화</span><span>오피니언</span></div></nav><div class="main"><div class="col"><div class="crumb"><b>국제</b><span>›</span><span>일본</span></div><h1 class="headline">日 안보 문서에<br>'<mark>핵잠 검토</mark>' 명기 추진<br>韓 핵잠은 제자리</h1><div class="by"><strong>이브리프 국방부</strong><i>|</i><time>입력 2026.11.12 02:30</time></div><div class="deck">비핵 3원칙까지 흔드는 다카이치 정부<br>美 '합의 없다'에 멈춘 韓 핵잠</div></div></div></section></div>
+<div class="slot"><section class="card" id="card2"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">욱일기 단 잠수함, 핵동력 다나</h2><figure class="photo"><img src="sub_flag.jpg" alt="해상자위대 잠수함과 자위함기"><figcaption>해상자위대 디젤 잠수함 '쇼류'와 자위함기(욱일기) · 2026년 4월 진주만 · 미 해군 사진</figcaption></figure><p class="lede">일본 정부가 12월 확정할 안보 3문서에 핵잠 도입을 위한 '<mark>조사·연구 착수</mark>'를 넣는 방안을 검토 중이라고 아사히신문이 11일 보도했다.</p></div></div></section></div>
+<div class="slot"><section class="card" id="card3"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">스스로 묶어 온 '핵 족쇄'</h2><ol class="tl">
+<li><span class="d">1945</span><div><h3>히로시마·나가사키 피폭</h3><p>일본 사회 '핵 거부감'의 출발점</p></div></li>
+<li><span class="d">1955</span><div><h3>원자력기본법 제정</h3><p>원자력은 <mark>평화 목적</mark>으로만 쓴다</p></div></li>
+<li><span class="d">1967</span><div><h3>비핵 3원칙 표명</h3><p>핵무기 보유·제조·반입 금지 (사토 총리)</p></div></li>
+<li><span class="d">2026</span><div><h3>연정 파트너 유신회</h3><p>'반입 금지' 재검토, 핵잠 조기 도입 주장</p></div></li>
+</ol></div></div></section></div>
+<div class="slot"><section class="card" id="card4"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">日은 속도, 韓은 제자리</h2><div class="cmp">
+<div><div class="yr">일본</div><span class="chip">검토 명기 추진</span><p>다카이치 총리 "구체적이고 현실적인 검토". 1척 약 1조 엔, 배치까지 10년 이상</p></div>
+<div class="no"><div class="yr">한국</div><span class="chip">후속 협의 정체</span><p>작년 10월 트럼프 승인 뒤 핵연료 확보 방안 미확정. 실무회의는 6월 한 차례</p></div>
+</div><p class="outlook">일본 방위상은 지난 7월 <mark>한국의 핵잠 승인</mark>을 직접 거론하며 논의가 필요하다고 밝혔다.</p></div></div></section></div>
+<div class="slot"><section class="card" id="card5"><div class="main"><div class="col"><div class="kicker-rule"></div><h2 class="kicker">美 '합의 없다'에 진화 나선 정부</h2><div class="turn">
+<div class="step"><span class="chip">조셉 윤 전 주한미국대사대리 · 10일</span><p>핵잠·원자력 협력에 "워싱턴 내 합의가 없다"</p></div>
+<div class="but">하루 뒤</div>
+<div class="step hot"><span class="chip">외교부 당국자 · 11일</span><p>"미 의회 내 초당적 지지가 형성돼 있다"</p></div>
+</div><p class="outlook">다만 비확산을 중시해 온 민주당이 중간선거로 <mark>상·하원을 장악</mark>해 후속 협의가 더 어려워질 수 있다는 우려가 나온다.</p><ul class="tags left"><li>#일본핵잠</li><li>#비핵3원칙</li><li>#한국핵잠</li></ul></div></div><footer class="foot"><div class="col"><span class="src">자료: 아사히·교도·연합뉴스 등 보도 종합</span><span></span></div></footer></section></div>
+<script>
+(function () {
+  var slots = document.querySelectorAll('.slot');
+  function fit() { slots.forEach(function (s) { s.querySelector('.card').style.transform = 'scale(' + (s.clientWidth / 480) + ')'; }); }
+  window.addEventListener('resize', fit); fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+})();
+</script>
+</body></html>
